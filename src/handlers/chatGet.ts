@@ -6,7 +6,9 @@ interface ChatEntry {
 
 export async function handleChatGet(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const { userName, chatId } = getPathParams(request);
-    const dbHistory: any = await env.DB.prepare(`SELECT role, content FROM history WHERE user_name = ?1 AND chat_id = ?2`)
+
+    const dbHistory: any = !userName || !chatId ? [] : 
+      await env.DB.prepare(`SELECT role, content FROM history WHERE user_name = ?1 AND chat_id = ?2`)
         .bind(userName, chatId)
         .all();
 

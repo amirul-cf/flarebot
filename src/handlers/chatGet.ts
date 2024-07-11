@@ -7,10 +7,10 @@ interface ChatEntry {
 export async function handleChatGet(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const { userName, chatId } = getPathParams(request);
 
-    const dbHistory: any = !userName || !chatId ? [] : 
+    const dbHistory = !userName || !chatId ? { results: [] } : 
       await env.DB.prepare(`SELECT role, content FROM history WHERE user_name = ?1 AND chat_id = ?2`)
         .bind(userName, chatId)
-        .all();
+        .all<ChatEntry>();
 
     const initialChatHistory: ChatEntry[] = [{ role: 'assistant', content: 'Hi there! How can I assist you today?' }, ...dbHistory.results];
 
